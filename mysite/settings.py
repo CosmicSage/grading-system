@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'flights.apps.FlightsConfig'
+    'flights.apps.FlightsConfig',
+    'grading.apps.GradingConfig',
 ]
 
 MIDDLEWARE = [
