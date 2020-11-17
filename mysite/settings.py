@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'livereload',
     'django.contrib.staticfiles',
     'flights.apps.FlightsConfig',
     'grading.apps.GradingConfig',
@@ -52,10 +53,13 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'livereload.middleware.LiveReloadScript',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -132,4 +136,7 @@ import os
 try:
     if not os.environ.get('DJANGO_DEVELOPMENT'):
         from .ProductionSettings import *
+        if DEBUG == False:
+            INSTALLED_APPS.remove('livereload')
+            MIDDLEWARE.remove('livereload.middleware.LiveReloadScript')
 except KeyError: pass
