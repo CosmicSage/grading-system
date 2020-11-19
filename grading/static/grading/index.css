@@ -17,10 +17,6 @@
   justify-content: center;
 }
 
-.service-button {
-  margin-right: 50px;
-  margin-left: 50px;
-}
 
 .service_info {
   padding-top: 60px;
@@ -37,4 +33,11 @@
   width: 100%;
   padding-top: 50px;
   border-bottom: 1px solid rgba(255,255,255,1);
+}
+
+@media (min-width : 600px) {
+  .service-button {
+    margin-right: 50px;
+    margin-left: 50px;
+  }
 }
