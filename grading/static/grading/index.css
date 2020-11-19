@@ -1,8 +1,40 @@
 .main_index {
   background-image: linear-gradient(to right, #00dbde 0%, #fc00ff 100%);
+  /* background-size: 400% 400%; */
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
+  padding: 50px;
+  padding-top: 40px;
+}
+
+.service-buttons {
+  padding-top: 40px;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.service-button {
+  margin-right: 50px;
+  margin-left: 50px;
+}
+
+.service_info {
+  padding-top: 60px;
+  font-size: 28px;
+}
+
+::selection {
+  background-color: white;
+  color: black;
+}
+
+
+.bar {
+  width: 100%;
+  padding-top: 50px;
+  border-bottom: 1px solid rgba(255,255,255,1);
 }
