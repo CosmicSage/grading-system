@@ -2,7 +2,13 @@
 {% block title %} Register as {{ type }}{% endblock %}
 {% block body %}
   <h1>Sign Up as a {{ type }}</h1>
-  <form class="" action="index.html" method="post">
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+  <form class="" action="{% url 'register' %}" method="post">
+    {% csrf_token %}
     {{ form.as_p }}
+    <input type="hidden" name="type" value="{{ type }}">
+    <button action="submit" class="btn btn-outline-dark">Submit</button>
   </form>
 {% endblock %}
