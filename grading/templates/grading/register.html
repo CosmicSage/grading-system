@@ -3,7 +3,7 @@
 {% block body %}
   <h1>Sign Up as a {{ type }}</h1>
   {% if message %}
-    <p>{{ message }}</p>
+    <p style="color:red;font-size:32px;">Don't<strong> Misbehave</strong> !!!!</p>
   {% endif %}
   <form class="" action="{% url 'register' %}" method="post">
     {% csrf_token %}

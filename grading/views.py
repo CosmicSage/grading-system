@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 
 # Create your views here.
@@ -14,11 +15,13 @@ def logout(request):
     return HttpResponse("DOSILGJAOEW")
 
 def account(request, type):
+    # print(dir(request), f"\n\n{request.content_params}", f"\n\n{request._messages}")
     if type not in ['s', 't']:
         return CustomHttpResponse(code=511)
     context = dict(
         type="Student" if type == "s" else "Teacher",
-        form=UserCreationForm
+        form=UserCreationForm,
+        message=[x.message for x in messages.get_messages(request)]
     )
     return render(request, "grading/register.html", context)
 
@@ -27,12 +30,17 @@ def register(request):
     import json
     if request.method == "POST":
         form = UserCreationForm(request.POST)
-        print(f"{dir(form)}\n\n, {form.data},\n\n{dir(form.hidden_fields)}\n\n{dir(form.errors)}\n\n{form.full_clean}\n\n{form.error_messages}")
-        if form.is_valid():
+        try:
+            type = form.data["type"][0].lower()[0]
+        except KeyError :
+            return CustomHttpResponse(code=406)
+        # print(f"{dir(form)}\n\n, {form.data},\n\n{dir(form.hidden_fields)}\n\n{dir(form.errors)}\n\n{form.full_clean}\n\n{form.error_messages}")
+        if form.is_valid() and type in ['s', 't']:
+            # Everthin alright log em in
             pass
         else:
-            context = dict(message=form.error_messages)
-            return HttpResponseRedirect(reverse('account', args=(form.data["type"][0].lower()[0],)))
+            messages.add_message(request, messages.ERROR, f"{form.error_messages}")
+            return HttpResponseRedirect(reverse('account', args=(type,)), dict(message=f"{form.error_messages}"))
 
         # try:
         #     if request.body["type"].lower()[0] in ['s', 't']:
