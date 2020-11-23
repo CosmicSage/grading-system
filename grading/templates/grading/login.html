@@ -4,13 +4,12 @@
 <h1>Login</h1>
 {% if message %}
   <div >
-    {{ message }}
+    <p style="color:red;font-size:32px;"><strong>{{ message }}</strong> !!!!</p>
   </div>
 {% endif %}
-<form class="" action="index.html" method="post">
+<form class="" action="{% url 'login' %}" method="post">
   {% csrf_token %}
-  <input type="text" name="username">
-  <input type="password" name="password">
-  <input type="submit" value="Login">
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-outline-warning">Login</button>
 </form>
 {% endblock %}

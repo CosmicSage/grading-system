@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login as auth_login
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from .models import Account
 
 # Create your views here.
@@ -11,10 +11,33 @@ def index(request):
     return render(request, "grading/index.html")
 
 def login(request):
-    return HttpResponse("Sda")
+    message = None
+    if request.method == "POST":
+        form = AuthenticationForm(request=request, data=request.POST)
+        if form.is_valid():
+            try:
+                username = form.cleaned_data["username"]
+                password = form.cleaned_data["password"]
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    auth_login(request, user)
+                    return HttpResponseRedirect(reverse("home"))
+                else:
+                    message = "Invalid username or password"
+            except KeyError:
+                return CustomHttpResponse(code=411)
+        else:
+            message = "Invalid username or password"
+    context = dict(
+        form=AuthenticationForm,
+        message=message
+    )
+
+    return render(request, "grading/login.html", context)
 
 def logout(request):
-    return HttpResponse("DOSILGJAOEW")
+    auth_logout(request)
+    return HttpResponseRedirect(reverse("home"))
 
 def account(request, type):
     # print(dir(request), f"\n\n{request.content_params}", f"\n\n{request._messages}")
