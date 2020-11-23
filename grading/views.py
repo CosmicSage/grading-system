@@ -35,6 +35,9 @@ def login(request):
 
     return render(request, "grading/login.html", context)
 
+def assignments(request):
+    return CustomHttpResponse(code=503)
+
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect(reverse("home"))

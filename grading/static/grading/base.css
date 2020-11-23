@@ -6,6 +6,12 @@
   -webkit-text-fill-color: transparent;
 }
 
+li:hover {
+  -webkit-transition: all .7s ease-out;
+  transition: all .7s ease-out;
+  background-color: rgba(220,220,220,0.55) !important;
+}
+
 @media (min-width: 526px) {
   .super-text {
     font-size: 100px;
@@ -31,7 +37,7 @@
   }
 
   .nav-item {
-    padding-right: 20px;
+    margin-right: 20px;
   }
 
   .nav-link {

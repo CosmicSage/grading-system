@@ -41,8 +41,11 @@
         <div class="collapse navbar-collapse secondary" id="navbarTogglerDemo02">
           <ul class="navbar-nav">
             {% if user.is_authenticated %}
-              <li class="nav-item">
+              <li class="nav-item active">
                 <span class="nav-link">Hello {{ user.username }}</span>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'assignments' %}"><span class="nav-link ghost-backdrop">Assignments</span></a>
               </li>
               <li class="nav-item">
                 <a href="{% url 'logout' %}"><button class="btn btn-outline" name="button">Log Out</button></a>
