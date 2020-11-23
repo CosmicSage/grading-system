@@ -3,6 +3,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login as auth_login
+from .models import Account
 
 # Create your views here.
 def index(request):
@@ -32,15 +34,28 @@ def register(request):
         form = UserCreationForm(request.POST)
         try:
             type = form.data["type"][0].lower()[0]
-        except KeyError :
+        except KeyError:
             return CustomHttpResponse(code=406)
         # print(f"{dir(form)}\n\n, {form.data},\n\n{dir(form.hidden_fields)}\n\n{dir(form.errors)}\n\n{form.full_clean}\n\n{form.error_messages}")
+
         if form.is_valid() and type in ['s', 't']:
             # Everthin alright log em in
-            pass
+            print("alrririttyyyy")
+
+            # Create user
+            user = form.save()
+
+            # Link user with account
+            account = Account(user=user, is_student=True if type == 's' else False, is_teacher=True if type == 't' else False)
+            account.save()
+
+            # auto-Login post registration
+            auth_login(request, user)
+            return HttpResponseRedirect(reverse("home"))
+
         else:
             messages.add_message(request, messages.ERROR, f"{form.error_messages}")
-            return HttpResponseRedirect(reverse('account', args=(type,)), dict(message=f"{form.error_messages}"))
+            return HttpResponseRedirect(reverse('account', args=(type,)))
 
         # try:
         #     if request.body["type"].lower()[0] in ['s', 't']:
