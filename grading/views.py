@@ -36,7 +36,13 @@ def login(request):
     return render(request, "grading/login.html", context)
 
 def assignments(request):
-    return CustomHttpResponse(code=503)
+    print(dir(request))
+    account = Account.objects.get(user=request.user)
+    if account.is_teacher:
+        return CustomHttpResponse(code=503)
+    if account.is_student:
+        return CustomHttpResponse(code=511)
+    return HttpResponse("sadkhos")
 
 def logout(request):
     auth_logout(request)
