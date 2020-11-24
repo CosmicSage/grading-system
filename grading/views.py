@@ -128,6 +128,12 @@ def register(request):
             account = Account(user=user, is_student=True if type == 's' else False, is_teacher=True if type == 't' else False)
             account.save()
 
+            # Additional Statement to fix model logic bug may remove in future
+            if type == 's':
+                # Create a Responder
+                responder = Responder(student=account)
+                responder.save()
+
             # auto-Login post registration
             auth_login(request, user)
             return HttpResponseRedirect(reverse("home"))
