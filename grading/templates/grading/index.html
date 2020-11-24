@@ -6,6 +6,11 @@
 
 {% block body %}
   <div class="main_index">
+    {% if account.is_student %}
+      <p >You are a student</p>
+    {% elif account.is_teacher %}
+      <p >You are a teacher!</p>
+    {% endif %}
     <h1 class="super-text">$ag3x's Cl@ssro0m</h1>
     <hr>
     <h4 style="color:white">World's best platform/SaaS service for mentoring upcoming enterprenurial talent.</h4>
