@@ -41,9 +41,32 @@ def login(request):
     return render(request, "grading/login.html", context)
 
 def assignments(request):
-    # if request.method == "POST":
-    #     print(dir(request))
-    #     return CustomHttpResponse("")
+    if request.method == "POST":
+        # Potentially dangerous
+        # REVIEW:
+        try:
+            code = request.POST.get('code')
+        except KeyError:
+            return CustomHttpResponse(code=402)
+
+        try:
+            # get the guy's account
+            account = Account.objects.get(user=request.user)
+
+            # get the guy's reponder avatar
+            responder = Responder.objects.get(student=account)
+
+            # get the assignment
+            assignment = Assignment.objects.get(code=code)
+
+            # If assign exists, add the guy to the assignment
+            assignment.responders.add(responder)
+
+            return HttpResponseRedirect(reverse("assignments"))
+
+        except (Assignment.DoesNotExist, Account.DoesNotExist, Responder.DoesNotExist):
+            return CustomHttpResponse(code=402)
+
     context = dict()
     if request.user.is_authenticated:
         account = Account.objects.get(user=request.user)
