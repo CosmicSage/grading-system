@@ -20,8 +20,9 @@
       <h1>Sign UP for an assignment</h1>
       <p>Enter 6 digit ALPHANUMERIC assignment code</p>
       <form action="{% url 'assignments' %}" method="post">
+        {% csrf_token %}
         <input type="text" name="code" placeholder="Enter Code">
-        <button type="button" class="btn btn-outline-info">Sign UP</button>
+        <button action="submit" class="btn btn-outline-dark">Submit</button>
       </form>
     </div>
   {% elif is_teacher %}
