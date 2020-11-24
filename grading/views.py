@@ -4,11 +4,16 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
-from .models import Account
+from .models import Account, Assignment, Responder
 
 # Create your views here.
 def index(request):
-    return render(request, "grading/index.html")
+    context = dict()
+    if request.user.is_authenticated:
+        # Get User's account
+        account = Account.objects.get(user=request.user)
+        context.update(dict(account=account))
+    return render(request, "grading/index.html", context)
 
 def login(request):
     message = None
@@ -36,13 +41,32 @@ def login(request):
     return render(request, "grading/login.html", context)
 
 def assignments(request):
-    print(dir(request))
-    account = Account.objects.get(user=request.user)
-    if account.is_teacher:
-        return CustomHttpResponse(code=503)
-    if account.is_student:
-        return CustomHttpResponse(code=511)
-    return HttpResponse("sadkhos")
+    # if request.method == "POST":
+    #     print(dir(request))
+    #     return CustomHttpResponse("")
+    context = dict()
+    if request.user.is_authenticated:
+        account = Account.objects.get(user=request.user)
+        if account.is_teacher:
+            # Get all assignments created by this teacher
+            work = account.grader.all()
+            context.update(dict(is_teacher=True))
+
+        elif account.is_student:
+            # Get the guy
+            responder = Responder.objects.get(student=account)
+
+            # Get all assignments this guy signed up for
+            work = responder.volunteer.all()
+            context.update(is_student=True)
+        else:
+            CustomHttpResponse(code=412)
+        context.update(dict(work=work))
+        return render(request, "grading/assignments.html", context)
+    return CustomHttpResponse(code=401)
+
+def a(request, a_code):
+    return HttpResponse(f"{Assignment.objects.get(code=a_code)}")
 
 def logout(request):
     auth_logout(request)
