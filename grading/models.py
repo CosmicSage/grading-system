@@ -25,7 +25,7 @@ class Assignment(m.Model):
     title = m.CharField(max_length=69)
     description = m.CharField(max_length=640)
     code = m.CharField(default=User.objects.make_random_password(length=6, allowed_chars=ALPHANUMERIC), max_length=6)
-    teacher = m.OneToOneField(Account, on_delete=m.CASCADE, related_name="grader")
+    teacher = m.ManyToManyField(Account, related_name="grader")
     # students = m.ManyToManyField(Account, related_name="responders", blank=True)
     # responses = m.ManyToManyField(Response, related_name="answers", blank=True)
     responders = m.ManyToManyField(Responder, related_name="volunteer", blank=True)
