@@ -45,28 +45,41 @@ def assignments(request):
         # Potentially dangerous
         # REVIEW:
         try:
-            code = request.POST.get('code')
-        except KeyError:
-            return CustomHttpResponse(code=402)
-
-        try:
             # get the guy's account
             account = Account.objects.get(user=request.user)
 
-            # get the guy's reponder avatar
-            responder = Responder.objects.get(student=account)
-
-            # get the assignment
-            assignment = Assignment.objects.get(code=code)
-
-            # If assign exists, add the guy to the assignment
-            assignment.responders.add(responder)
-
-            return HttpResponseRedirect(reverse("assignments"))
-
-        except (Assignment.DoesNotExist, Account.DoesNotExist, Responder.DoesNotExist):
+        except Account.DoesNotExist:
             return CustomHttpResponse(code=402)
 
+        if account.is_student:
+            try:
+                # Get the code now
+                code = request.POST.get('code')
+
+                # get the guy's reponder avatar
+                responder = Responder.objects.get(student=account)
+
+                # get the assignment
+                assignment = Assignment.objects.get(code=code)
+
+                # If assign exists, add the guy to the assignment
+                assignment.responders.add(responder)
+
+                return HttpResponseRedirect(reverse("assignments"))
+
+            except (Assignment.DoesNotExist, KeyError, Responder.DoesNotExist):
+                return CustomHttpResponse(code=402)
+
+        elif account.is_teacher:
+            try:
+                title = request.POST.get("title")
+                desc = request.POST.get("description")
+                a = Assignment(title=title, description=desc)
+                a.save()
+                a.teacher.add(account)
+            except KeyError:
+                return CustomHttpResponse(code=403)
+            HttpResponseRedirect(reverse("assignments"))
     context = dict()
     if request.user.is_authenticated:
         account = Account.objects.get(user=request.user)

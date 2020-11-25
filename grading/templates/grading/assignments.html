@@ -26,9 +26,15 @@
       </form>
     </div>
   {% elif is_teacher %}
-    <div style="padding-top:70vh;">
+    <div>
       <h1>Make A New Assignment</h1>
-      <p>// TODO</p>
+      <form action="{% url 'assignments' %}" method="post">
+        {% csrf_token %}
+        <input required type="text" name="title" placeholder="Enter Title">
+        <textarea required name="description" rows="8" cols="80" placeholder="Describe Your Assignment"></textarea>
+        <p style="color:GOLDENROD;">The Code for this task will be generated for you</p>
+        <button type="submit" class="btn btn-outline-primary">Create</button>
+      </form>
     </div>
   {% endif %}
 

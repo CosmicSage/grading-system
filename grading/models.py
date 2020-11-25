@@ -31,4 +31,4 @@ class Assignment(m.Model):
     responders = m.ManyToManyField(Responder, related_name="volunteer", blank=True)
 
     def __str__(self):
-        return f"{self.title}"
+        return f"{self.title} | code -> {self.code}"
