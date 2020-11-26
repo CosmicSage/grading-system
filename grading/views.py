@@ -101,8 +101,35 @@ def assignments(request):
         return render(request, "grading/assignments.html", context)
     return CustomHttpResponse(code=401)
 
-def a(request, a_code):
-    return HttpResponse(f"{Assignment.objects.get(code=a_code)}")
+def a(request, code):
+    try:
+        # Execution stops if not legit user
+        account = Account.objects.get(user=request.user)
+
+        ass = Assignment.objects.get(code=code)
+        context = {}
+
+        if account.is_teacher:
+            responders = transformResponders(ass.responders.all())
+            context.update(is_teacher=True,responses=responders)
+
+
+        elif account.is_student:
+            context.update(is_student=True)
+
+        else: return CustomHttpResponse(code=401)
+
+        # Set Context
+        context.update(dict(title=ass.title, desc=ass.description))
+        print(context)
+
+        # Render Template since all seems legit
+        return render(request, "grading/assignment.html", context)
+
+    # Maybe It's ok to TypeError close
+    except (Account.DoesNotExist, TypeError, Assignment.DoesNotExist):
+        return CustomHttpResponse(code=511)
+    # return HttpResponse(f"{Assignment.objects.get(code=a_code)}")
 
 def logout(request):
     auth_logout(request)
@@ -181,6 +208,10 @@ class CustomHttpResponse(HttpResponse):
         self.content = F"<h2>{error.value}</h2><h1>{error.phrase}</h1><hr>"
         self.status_code = error.value
 
+
+def transformResponders(responders):
+    print(responders, [x.work for x in responders])
+    return responders
 
 # class CustomHttpResponse(HttpResponse, code):
 #     def someRandomFunction(self, code):

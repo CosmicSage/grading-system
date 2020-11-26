@@ -1,0 +1,24 @@
+{% extends "grading/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+  <strong><h1>{{ title }}</h1></strong>
+  <h2>Description:</h2>
+  <h3>{{ desc }}</h3>
+  <hr>
+  {% if is_teacher %}
+    <h4>Students who signed up for this work</h4>
+    {% if responses %}
+      <ul>
+        {% for r in responses %}
+          <li>{{ r }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No Submissisons Yet</p>
+    {% endif %}
+  {% elif is_student %}
+    <h3>Submit Your Response</h3>
+  {% endif %}
+{% endblock %}
