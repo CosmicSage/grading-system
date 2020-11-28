@@ -20,5 +20,10 @@
     {% endif %}
   {% elif is_student %}
     <h3>Submit Your Response</h3>
+    <form  action="{% url 'a' code %}" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <button type="submit" class="btn btn-outline-dark">Submit</button>
+    </form>
   {% endif %}
 {% endblock %}

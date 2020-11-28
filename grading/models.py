@@ -32,6 +32,5 @@ class Response(m.Model):
     score = m.IntegerField(default=1, validators=[MaxValueValidator(100), MinValueValidator(1)], blank=True)
     assignment = m.ForeignKey(Assignment, on_delete=m.CASCADE, related_name="questions")
 
-
     def __str__(self):
-        return f"{self.student.user.username} | {self.assignment.title} | {self.work.name} | {self.score}"
+        return f"{self.student.user.username} | {self.assignment.title} | {self.work.name if self.work.name != '' else 'Hasnt submitted shit'} | {self.score}"

@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from .models import Account, Assignment, Response
+from .forms import UploadFileForm
 
 # Funny Things
 import os
@@ -113,7 +114,7 @@ def a(request, code):
         account = Account.objects.get(user=request.user)
 
         ass = Assignment.objects.get(code=code)
-        context = {}
+        context = {'code' : code}
 
         if account.is_teacher:
             responders = transformResponders(ass.questions.all())
@@ -121,7 +122,7 @@ def a(request, code):
 
 
         elif account.is_student:
-            context.update(is_student=True)
+            context.update(dict(is_student=True, form=UploadFileForm()))
 
         else: return CustomHttpResponse(code=401)
 
@@ -129,6 +130,7 @@ def a(request, code):
         context.update(dict(title=ass.title, desc=ass.description))
 
         # Render Template since all seems legit
+        print(context)
         return render(request, "grading/assignment.html", context)
 
     # Maybe It's ok to TypeError close
