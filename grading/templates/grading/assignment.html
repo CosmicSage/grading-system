@@ -12,15 +12,28 @@
     {% if responses %}
       <ul>
         {% for r in responses %}
-          <li>{{ r }}</li>
+          <li>
+            {{ r }}
+            <p>Assign a grade ↑↑↑</p>
+            <form  action="{% url 'score' %}" method="post">
+              {% csrf_token %}
+              <input type="number" name="score" min="1" max="100">
+              <input type="hidden" name="username" value="{{ r.student.user.username }}">
+              <input type="hidden" name="code" value="{{ code }}">
+              <button type="submit" class="btn btn-outline-dark">Confirm Score</button>
+            </form>
+          </li>
         {% endfor %}
       </ul>
     {% else %}
       <p>No Submissisons Yet</p>
     {% endif %}
   {% elif is_student %}
+    {% if score.score %}
+      <h1 style="color:green;">Your Score for this ass is {{ score.score }}</h1>
+    {% endif %}
     <h3>Submit Your Response</h3>
-    <form  action="{% url 'a' code %}" method="post">
+    <form enctype="multipart/form-data" action="{% url 'a' code %}" method="post">
       {% csrf_token %}
       {{ form }}
       <button type="submit" class="btn btn-outline-dark">Submit</button>
