@@ -133,7 +133,7 @@ def a(request, code):
 
 
         elif account.is_student:
-            context.update(dict(is_student=True, form=UploadFileForm()))
+            context.update(dict(is_student=True, form=UploadFileForm(), score=ass.questions.filter(student=account, assignment=ass).first()))
 
         else: return CustomHttpResponse(code=401)
 
@@ -203,6 +203,27 @@ def register(request):
         # print(request.body)
         return HttpResponse(json.dumps(dict(go="bo")), content_type="application/json")
     return CustomHttpResponse(code=405)
+
+def score(request):
+    try:
+        code = request.POST.get('code')
+        username = request.POST.get("username")
+        score = request.POST.get("score")
+    except KeyError:
+        return CustomHttpResponse(code=402)
+
+    # Get the Grader
+    account = Account.objects.get(user=request.user)
+
+    # REVIEW: Update need --> better row/object query ↓↓↓
+    # Get Grader's gradees
+    ass = Assignment.objects.get(code=code).questions.all()
+    for a in ass:
+        if a.student.user.username == username:
+            a.score = score
+            a.save()
+            return HttpResponse(f"{code} | {a.score} {a.student}")
+
 
 from http import HTTPStatus
 from django.http import HttpResponse

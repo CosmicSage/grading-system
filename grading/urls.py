@@ -11,5 +11,6 @@ urlpatterns = [
     path("account/<str:type>", views.account, name="account"),
     # path("accounts/", include("django.contrib.auth.urls"))
     path("assignments", views.assignments, name="assignments"),
-    path("assignments/a/<str:code>", views.a, name='a')
+    path("assignments/a/<str:code>", views.a, name='a'),
+    path("score", views.score, name="score")
 ]
