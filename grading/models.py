@@ -13,13 +13,6 @@ class Account(m.Model):
     def __str__(self):
         return f"{self.user.username}"
 
-class Responder(m.Model):
-    work = m.FileField(blank=True)
-    student = m.ForeignKey(Account, on_delete=m.CASCADE, related_name="responder")
-    score = m.IntegerField(default=1, validators=[MaxValueValidator(100), MinValueValidator(1)], blank=True)
-
-    def __str__(self):
-        return f"{self.student.user.username}"
 
 class Assignment(m.Model):
     title = m.CharField(max_length=69)
@@ -28,7 +21,17 @@ class Assignment(m.Model):
     teacher = m.ManyToManyField(Account, related_name="grader")
     # students = m.ManyToManyField(Account, related_name="responders", blank=True)
     # responses = m.ManyToManyField(Response, related_name="answers", blank=True)
-    responders = m.ManyToManyField(Responder, related_name="volunteer", blank=True)
+    # responders = m.ForeignKey(Responder, on_delete=m.CASCADE, related_name="volunteer", blank=True)
 
     def __str__(self):
         return f"{self.title} | code -> {self.code}"
+
+class Response(m.Model):
+    work = m.FileField(blank=True)
+    student = m.ForeignKey(Account, on_delete=m.CASCADE, related_name="responder")
+    score = m.IntegerField(default=1, validators=[MaxValueValidator(100), MinValueValidator(1)], blank=True)
+    assignment = m.ForeignKey(Assignment, on_delete=m.CASCADE, related_name="questions")
+
+
+    def __str__(self):
+        return f"{self.work.name} | {self.score}"
