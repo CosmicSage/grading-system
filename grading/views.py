@@ -116,6 +116,17 @@ def a(request, code):
         ass = Assignment.objects.get(code=code)
         context = {'code' : code}
 
+        # Handle incoming file via post request
+        if request.method == "POST":
+            form = UploadFileForm(request.POST, request.FILES)
+            print(request.FILES['file'])
+            if form.is_valid():
+                print(request.FILES['file'], "\n\n\n\n\nvvvv\n\n\n")
+                # handle_uploaded_file(request.FILES['file'])
+                return HttpResponseRedirect(reverse('a', args=(code,)))
+            else:
+                print("\n\nn\n\n\n\nnnnnnnnnnnnnnnnnnnnnnnnn")
+
         if account.is_teacher:
             responders = transformResponders(ass.questions.all())
             context.update(is_teacher=True,responses=responders)
@@ -130,7 +141,6 @@ def a(request, code):
         context.update(dict(title=ass.title, desc=ass.description))
 
         # Render Template since all seems legit
-        print(context)
         return render(request, "grading/assignment.html", context)
 
     # Maybe It's ok to TypeError close
@@ -213,7 +223,6 @@ class CustomHttpResponse(HttpResponse):
 
 
 def transformResponders(responders):
-    print(responders, [x.work for x in responders])
     return responders
 
 # class CustomHttpResponse(HttpResponse, code):
