@@ -34,4 +34,4 @@ class Response(m.Model):
 
 
     def __str__(self):
-        return f"{self.work.name} | {self.score}"
+        return f"{self.student.user.username} | {self.work.name} | {self.score}"

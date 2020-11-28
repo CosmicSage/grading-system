@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
-from .models import Account, Assignment, Responder
+from .models import Account, Assignment, Response
 
 # Create your views here.
 def index(request):
@@ -89,14 +89,13 @@ def assignments(request):
             context.update(dict(is_teacher=True))
 
         elif account.is_student:
-            # Get the guy
-            responder = Responder.objects.get(student=account)
 
             # Get all assignments this guy signed up for
-            work = responder.volunteer.all()
+            work = [a.assignment for a in account.responder.all()]
             context.update(is_student=True)
-        else:
-            CustomHttpResponse(code=412)
+
+        else: CustomHttpResponse(code=412)
+
         context.update(dict(work=work))
         return render(request, "grading/assignments.html", context)
     return CustomHttpResponse(code=401)
@@ -168,11 +167,7 @@ def register(request):
             account = Account(user=user, is_student=True if type == 's' else False, is_teacher=True if type == 't' else False)
             account.save()
 
-            # Additional Statement to fix model logic bug may remove in future
-            if type == 's':
-                # Create a Responder
-                responder = Responder(student=account)
-                responder.save()
+            # Additional Statement to fix model logic bug may remove in future --> Massive Shift
 
             # auto-Login post registration
             auth_login(request, user)
