@@ -24,6 +24,9 @@
         <input type="text" name="code" placeholder="Enter Code">
         <button action="submit" class="btn btn-outline-dark">Submit</button>
       </form>
+      {% if demo_assignment_code %}
+        <p style="color:cyan;background-color:black;">Try this demo assignment code that won't(might) get graded by anyone(the God himself) <strong style="font-size:28px;">:{{ demo_assignment_code }}</strong> </p>
+      {% endif %}
     </div>
   {% elif is_teacher %}
     <div>

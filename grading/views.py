@@ -6,6 +6,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from .models import Account, Assignment, Response
 
+# Funny Things
+import os
+DEMO = os.environ.get("DJANGO_GRADING_DEMO_ASSIGNMENT")
+
 # Create your views here.
 def index(request):
     context = dict()
@@ -94,7 +98,8 @@ def assignments(request):
 
             # Get all assignments this guy signed up for
             work = [a.assignment for a in account.responder.all()]
-            context.update(is_student=True)
+
+            context.update(dict(is_student=True, demo_assignment_code=DEMO))
 
         else: CustomHttpResponse(code=412)
 
