@@ -56,18 +56,19 @@ def assignments(request):
                 # Get the code now
                 code = request.POST.get('code')
 
-                # get the guy's reponder avatar
-                responder = Responder.objects.get(student=account)
-
                 # get the assignment
                 assignment = Assignment.objects.get(code=code)
 
-                # If assign exists, add the guy to the assignment
-                assignment.responders.add(responder)
+                # Check if user already has this assignment
+                if any(x.student == account for x in assignment.questions.all()): return HttpResponseRedirect(reverse("assignments"))
+
+                # Create a new Response Object
+                response = Response(student=account, assignment=assignment)
+                response.save()
 
                 return HttpResponseRedirect(reverse("assignments"))
 
-            except (Assignment.DoesNotExist, KeyError, Responder.DoesNotExist):
+            except (Assignment.DoesNotExist, KeyError, Response.DoesNotExist):
                 return CustomHttpResponse(code=402)
 
         elif account.is_teacher:
@@ -77,6 +78,7 @@ def assignments(request):
                 a = Assignment(title=title, description=desc)
                 a.save()
                 a.teacher.add(account)
+
             except KeyError:
                 return CustomHttpResponse(code=403)
             HttpResponseRedirect(reverse("assignments"))
@@ -109,7 +111,7 @@ def a(request, code):
         context = {}
 
         if account.is_teacher:
-            responders = transformResponders(ass.responders.all())
+            responders = transformResponders(ass.questions.all())
             context.update(is_teacher=True,responses=responders)
 
 
@@ -120,7 +122,6 @@ def a(request, code):
 
         # Set Context
         context.update(dict(title=ass.title, desc=ass.description))
-        print(context)
 
         # Render Template since all seems legit
         return render(request, "grading/assignment.html", context)
@@ -167,7 +168,7 @@ def register(request):
             account = Account(user=user, is_student=True if type == 's' else False, is_teacher=True if type == 't' else False)
             account.save()
 
-            # Additional Statement to fix model logic bug may remove in future --> Massive Shift
+            # Additional Statement to fix model logic bug may remove in future --> Massive Shift removal
 
             # auto-Login post registration
             auth_login(request, user)
