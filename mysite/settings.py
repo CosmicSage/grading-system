@@ -139,4 +139,4 @@ try:
         if DEBUG == False:
             INSTALLED_APPS.remove('livereload')
             MIDDLEWARE.remove('livereload.middleware.LiveReloadScript')
-except KeyError: pass
+except (KeyError, ValueError): pass
